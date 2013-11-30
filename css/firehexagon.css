@@ -1,0 +1,66 @@
+html, body {
+  width:  100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#load-screen {
+  position: absolute;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+#menu-screen {
+  display: none;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+}
+
+#game-screen {
+  display: none;
+}
+
+#title {
+
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 20vh;
+  
+  cursor: pointer;
+}
+
+.menu-button {
+  margin: 20vh;
+
+  color: #ffffff;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 20vh;
+  
+  cursor: pointer;
+}
+
+#start-button {
+}
+
+#game-canvas {
+  display: none;
+  margin: auto;
+}
+
+#left-button {
+  position: fixed;
+  top: 0;
+  left: 0;
+  
+  width: 50%;
+  height: 100%;
+}
+
+#right-button {
+  position: fixed;
+  top: 0;
+  right: 0;
+  
+  width: 50%;
+  height: 100%;
+}
