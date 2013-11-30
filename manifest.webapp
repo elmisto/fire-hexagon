@@ -1,7 +1,7 @@
 {
   "name": "Fire Hexagon",
   "description": "Simple particle effect WebGL demo",
-  "launch_path": "http://elmisto.github.io/fire-hexagon/source.html",
+  "launch_path": "source.html",
   "developer": {
     "name": "Aszalós Gábor"
   },
