@@ -160,9 +160,6 @@ function drawSegment(fill) {
     340 * CT1,
     340 * ST1
   );
-  context.fill();
-
-  context.beginPath();
   context.moveTo(0, 0);
   context.lineTo(
     340 * CT2,
@@ -172,9 +169,6 @@ function drawSegment(fill) {
     340 * CT3,
     340 * ST3
   );
-  context.fill();
-
-  context.beginPath();
   context.moveTo(0, 0);
   context.lineTo(
     340 * CT4,
