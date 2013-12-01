@@ -181,11 +181,7 @@ function drawSegment(fill) {
   context.fill();
 }
 
-function drawCenter(fill, stroke) {
-  context.fillStyle = fill;
-  context.strokeStyle = stroke;
-  context.lineWidth = 2;
-  
+function drawCenter(fill, stroke) {  
   context.beginPath();
   context.moveTo(
     32,
@@ -212,7 +208,11 @@ function drawCenter(fill, stroke) {
     32 * ST5
   );
   context.closePath();
+
+  context.fillStyle = fill;
   context.fill();
+
+  context.strokeStyle = stroke;
   context.stroke();
 }
 
@@ -302,19 +302,6 @@ function isCollision() {
   }
 } 
 
-function generateColor(h, s, l) {
-  colors = {
-    "bg1":  "hsl( " + h + ", " + s + "%, " + l + "%)",
-    "bg2":  "hsl( " + h + ", " + s + "%, " + (l + 10) + "%)",
-    "main": "hsl( " + h + ", " + s + "%, " + (l + 40) + "%)"
-  };
-}
-
-function clear(fill) {
-  canvas.width += 0;
-  canvas.style.background = fill;
-}
-
 function goMenu() {
   loadScreen.style.display = "none";
   menuScreen.style.display = "block";
@@ -344,6 +331,20 @@ function goResults() {
   
   window.cancelAnimFrame(requestID);
   requestID = window.requestAnimFrame(menu);
+}
+
+function generateColor(h, s, l) {
+  colors = {
+    "bg1":  "hsl( " + h + ", " + s + "%, " + l + "%)",
+    "bg2":  "hsl( " + h + ", " + s + "%, " + (l + 10) + "%)",
+    "main": "hsl( " + h + ", " + s + "%, " + (l + 40) + "%)"
+  };
+}
+
+function clear(fill) {
+  canvas.style.background = fill;
+  context.setTransform(1, 0, 0, 1, 0, 0);
+  context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function menu() {
