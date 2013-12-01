@@ -8,6 +8,7 @@
 <title>Fire Hexagon</title>
 </head>
 <body>
+<div id="game-container">
   <div id="load-screen">
     Loading...
   </div>
@@ -19,8 +20,15 @@
   <div id="game-screen">
     <div id="left-button"></div>
     <div id="right-button"></div>
+	  <div id="hud">
+        <div id="timer">
+          <div id="time-label">time</div>
+          <div id="seconds"></div>
+          <div id="thirds"></div>
+        </div>
+	  </div>
   </div>
   <canvas id="game-canvas">Sorry, no canvas support!</canvas>
-
+</div>
 </body>
 </html>

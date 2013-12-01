@@ -34,7 +34,8 @@ var leftButton = document.getElementById("left-button");
 var rightButton = document.getElementById("right-button");
 var results = document.getElementById("results");
 
-var diag = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
+var seconds = document.getElementById("seconds");
+var thirds = document.getElementById("thirds");
 
 // -------------------------------------------------------- GAME STATE VARIABLES
 
@@ -62,7 +63,7 @@ var h = 120;                           // Base color hue
 
 var shapes = [];                       // Shapes list
 
-var startTime = 0;                     // Current game start time
+var gameTime = 0;                      // Current game start time
 
 // ------------------------------------------------- ANIMATION CONTROL FUNCTIONS
 window.requestAnimFrame = (function() {
@@ -375,9 +376,13 @@ function menu() {
 
 function animate() {
   var timestamp = performance.now();
-  var dp = (timestamp - last_timestamp) / period;
+  var dt = timestamp - last_timestamp;
+  var dp = dt / period;
   last_timestamp = timestamp;
   
+  seconds.innerHTML = Math.floor(gameTime / 1000);
+  thirds.innerHTML = Math.round((gameTime % 1000) * 60 / 1000);
+
   h += 5 * dp;
   generateColor(h, 100, 20);
   
@@ -396,6 +401,7 @@ function animate() {
   context.rotate(heroRot);
   drawHero(colors.main);
 
+  gameTime += dt;
   beat += dp;
   worldRot += worldDir * worldSpeed * dp;
   heroRot += heroDir * heroSpeed * dp;
@@ -434,7 +440,7 @@ function animate() {
   }
   else {
     window.navigator.vibrate(100);
-    results.innerHTML = Math.round(performance.now() - startTime) / 1000;
+    results.innerHTML = Math.round(gameTime) / 1000;
     goResults(); 
   }
 }

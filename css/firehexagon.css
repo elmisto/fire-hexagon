@@ -3,6 +3,9 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+
+  text-align: center;
+  overflow: hidden;
 }
 
 #load-screen {
@@ -22,7 +25,6 @@ html, body {
 }
 
 #title {
-
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-size: 20vh;
   
@@ -39,16 +41,17 @@ html, body {
   cursor: pointer;
 }
 
-#start-button {
+#game-container {
+  display: inline-block;
+  position: relative;
 }
 
 #game-canvas {
   display: none;
-  margin: auto;
 }
 
 #left-button {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   
@@ -57,10 +60,47 @@ html, body {
 }
 
 #right-button {
-  position: fixed;
+  position: absolute;
   top: 0;
   right: 0;
   
   width: 50%;
   height: 100%;
+}
+
+#hud {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #fff;
+}
+
+#best-time {
+  display: inline;
+}
+
+#timer {
+  background: #000;
+  width: 100px;
+  
+  border-radius: 0 0 0 10px;
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+  font-weight: bold;
+  text-align: left;
+  padding: 0 5px;
+}
+
+#time-label {
+  display: inline;
+  vertical-align: top;
+}
+
+#seconds {
+  display: inline-block;
+  font-size: 1.5em;
+}
+
+#thirds {
+  display: inline-block;
+  font-size: 0.6em;
 }
