@@ -1,25 +1,7 @@
 window.onload = function() {
 
-// ---------------------------------------------------------- PRECOMPUTED VALUES
-var PI = Math.PI;
-var TAU = 2 * PI;
-
-var T1 = TAU / 6;
-var T2 = TAU / 6 * 2;
-var T3 = TAU / 6 * 3;
-var T4 = TAU / 6 * 4;
-var T5 = TAU / 6 * 5;
-
-var CT1 = Math.cos(T1);
-var ST1 = Math.sin(T1);
-var CT2 = Math.cos(T2);
-var ST2 = Math.sin(T2);
-var CT3 = Math.cos(T3);
-var ST3 = Math.sin(T3);
-var CT4 = Math.cos(T4);
-var ST4 = Math.sin(T4);
-var CT5 = Math.cos(T5);
-var ST5 = Math.sin(T5);
+PI = Math.PI;
+TAU = 2 * PI;
 
 // ------------------------------------------------------------------ DOM OJECTS
 var canvas = document.getElementById("game-canvas");
@@ -149,65 +131,66 @@ window.addEventListener("visibilitychange", function() {
 
 // ----------------------------------------------------------- DRAWING FUNCTIONS
 function drawSegment(fill) {
-  context.fillStyle = fill;
-  
   context.beginPath();
-  context.moveTo( 0, 0 );
-  context.lineTo( 340, 0 );
-  context.lineTo( Math.round(340 * CT1), Math.round(340 * ST1) );
-  context.moveTo( 0, 0 );
-  context.lineTo( Math.round(340 * CT2), Math.round(340 * ST2) );
-  context.lineTo( Math.round(340 * CT3), Math.round(340 * ST3) );
-  context.moveTo( 0, 0 );
-  context.lineTo( Math.round(340 * CT4), Math.round(340 * ST4) );
-  context.lineTo( Math.round(340 * CT5), Math.round(340 * ST5) );
+  context.moveTo( 0,                           0 );
+  context.lineTo( 340,                         0 );
+  context.lineTo( 340 * Math.cos(    TAU / 6), 340 * Math.sin(    TAU / 6) );
+  context.moveTo( 0,                           0 );
+  context.lineTo( 340 * Math.cos(2 * TAU / 6), 340 * Math.sin(2 * TAU / 6) );
+  context.lineTo( 340 * Math.cos(3 * TAU / 6), 340 * Math.sin(3 * TAU / 6) );
+  context.moveTo( 0,                           0 );
+  context.lineTo( 340 * Math.cos(4 * TAU / 6), 340 * Math.sin(4 * TAU / 6) );
+  context.lineTo( 340 * Math.cos(5 * TAU / 6), 340 * Math.sin(5 * TAU / 6) );
+  context.fillStyle = fill;
   context.fill();
 }
 
 function drawCenter(fill, stroke) {  
   context.beginPath();
-  context.moveTo( 32, 0 );
-  context.lineTo( Math.round(32 * CT1), Math.round(32 * ST1) );
-  context.lineTo( Math.round(32 * CT2), Math.round(32 * ST2) );
-  context.lineTo( Math.round(32 * CT3), Math.round(32 * ST3) );
-  context.lineTo( Math.round(32 * CT4), Math.round(32 * ST4) );
-  context.lineTo( Math.round(32 * CT5), Math.round(32 * ST5) );
+  context.moveTo( 32,                         0 );
+  context.lineTo( 32 * Math.cos(    TAU / 6), 32 * Math.sin(    TAU / 6) );
+  context.lineTo( 32 * Math.cos(2 * TAU / 6), 32 * Math.sin(2 * TAU / 6) );
+  context.lineTo( 32 * Math.cos(3 * TAU / 6), 32 * Math.sin(3 * TAU / 6) );
+  context.lineTo( 32 * Math.cos(4 * TAU / 6), 32 * Math.sin(4 * TAU / 6) );
+  context.lineTo( 32 * Math.cos(5 * TAU / 6), 32 * Math.sin(5 * TAU / 6) );
   context.closePath();
-
   context.fillStyle = fill;
   context.fill();
-
   context.strokeStyle = stroke;
   context.stroke();
 }
 
 function drawHero(fill) {
-  context.fillStyle = fill;
-  
   context.beginPath();
   context.moveTo(40, 0);
   context.arc(40, 0, 6, 2.5, - 2.5, false);
+  context.fillStyle = fill;
   context.fill();
 }
 
 function drawObstacle(seg, dist, fill) {
-  var C1 = Math.cos(seg * T1);
-  var S1 = Math.sin(seg * T1);
-  
-  var C2 = Math.cos((seg + 1) * T1);
-  var S2 = Math.sin((seg + 1) * T1);
-  
-  context.fillStyle = fill;
-
   context.beginPath();
-  context.moveTo( dist * C1, dist * S1 );
-  context.lineTo( (dist + 13) * C1, (dist + 13) * S1 );
-  context.lineTo( (dist + 13) * C2, (dist + 13) * S2 );
-  context.lineTo( dist * C2, dist * S2 );
+  context.moveTo(
+    dist * Math.cos(seg * TAU / 6),
+    dist * Math.sin(seg * TAU /6)
+  );
+  context.lineTo(
+    (dist + 13) * Math.cos(seg * TAU / 6),
+    (dist + 13) * Math.sin(seg * TAU / 6)
+  );
+  context.lineTo(
+    (dist + 13) * Math.cos((seg + 1) * TAU / 6),
+    (dist + 13) * Math.sin((seg + 1) * TAU / 6)
+  );
+  context.lineTo(
+    dist * Math.cos((seg + 1) * TAU / 6),
+    dist * Math.sin((seg + 1) * TAU / 6)
+  );
+  context.fillStyle = fill;
   context.fill();  
 }
 
-// TODO: use forEach here
+// TODO: don't need to draw all the obstacles
 function drawShape(shape, fill) {
   for(var i = 0; i < shape.seg.length; i++) {
     drawObstacle(shape.seg[i], shape.dist, fill);
@@ -344,7 +327,10 @@ function animate() {
 
   context.scale(scale, scale);
   drawSegment(colors.bg2);
-  context.scale((1 - Math.cos(beat * TAU) * 0.07), (1 - Math.cos(beat * TAU) * 0.07));
+  context.scale(
+    (1 - Math.cos(beat * TAU) * 0.07),
+    (1 - Math.cos(beat * TAU) * 0.07)
+  );
 
   shapes.forEach(function(e) {
     drawShape(e, colors.main);
