@@ -245,9 +245,9 @@ function createVSahpe(seg, dist) {
 }
 
 function isCollision() {
-  if(shapes.length > 0) {
-     return ( shapes[0].dist <= 32 )      &&
-            ( shapes[0].dist + 13 >= 32 ) &&
+  if(shapes.length) { //TODO: obstacle is linear but hero's position is rounded
+     return ( shapes[0].dist <= 46 ) &&
+            ( shapes[0].dist + 13 >= 46 ) &&
             ( shapes[0].seg.indexOf(heroSegment) !== -1); 
   }
   else {
