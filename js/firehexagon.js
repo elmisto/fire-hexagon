@@ -390,9 +390,11 @@ function animate() {
   
   context.translate(canvas.width / 2, canvas.height / 2);
   context.rotate(worldRot);
-  context.scale((1 - Math.cos(beat * TAU) * 0.07) * scale, (1 - Math.cos(beat * TAU) * 0.07) * scale);
-  
+
+  context.scale(scale, scale);
   drawSegment(colors.bg2);
+  context.scale((1 - Math.cos(beat * TAU) * 0.07), (1 - Math.cos(beat * TAU) * 0.07));
+
   shapes.forEach(function(e) {
     drawShape(e, colors.main);
   });
