@@ -198,14 +198,14 @@ function drawShape(shape, fill) {
 }
 
 // --------------------------------------------------- SHAPE GENERATOR FUNCTIONS
-function createIShape(seg, dist) {
+function createCIShape(seg, dist) {
   return {
-    "seg": [ seg ],
+    "seg": [ seg % 6, (seg + 2) % 6, (seg + 3) % 6, (seg + 4) % 6 ],
     "dist": dist
   };
 }
 
-function createCSahpe(seg, dist) {
+function createCShape(seg, dist) {
   return {
     "seg": [ seg % 6, (seg + 1) % 6, (seg + 2) % 6,
              (seg + 3) % 6, (seg + 4) % 6 ],
@@ -213,16 +213,9 @@ function createCSahpe(seg, dist) {
   };
 }
 
-function createOSahpe(seg, dist) {
+function createOShape(seg, dist) {
   return {
     "seg": [ seg % 6, (seg + 2) % 6, (seg + 4) % 6 ],
-    "dist": dist
-  };
-}
-
-function createVSahpe(seg, dist) {
-  return {
-    "seg": [ seg % 6, (seg + 1) % 6 ],
     "dist": dist
   };
 }
@@ -356,15 +349,22 @@ function animate() {
     e.dist -= 60 * dp;
   });
   
-  if(shapes.length < 3) {
-    if(Math.random() < 0.7) {
-      shapes.push(createCSahpe(
+  if( shapes.length < 3 ) {
+    var selector = Math.random();
+    if( selector < 0.3 ) {
+      shapes.push(createCIShape(
+        Math.round(Math.random() * 6),
+        (shapes.length + 2) * 150)
+      );
+    }
+    else if ( selector < 0.6 ){
+      shapes.push(createOShape(
         Math.round(Math.random() * 6),
         (shapes.length + 2) * 150)
       );
     }
     else {
-      shapes.push(createIShape(
+      shapes.push(createCShape(
         Math.round(Math.random() * 6),
         (shapes.length + 2) * 150)
       );
