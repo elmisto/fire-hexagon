@@ -1,0 +1,106 @@
+html, body {
+  width:  100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  text-align: center;
+  overflow: hidden;
+}
+
+#load-screen {
+  position: absolute;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+#menu-screen {
+  display: none;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+}
+
+#game-screen {
+  display: none;
+}
+
+#title {
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 20vh;
+  
+  cursor: pointer;
+}
+
+.menu-button {
+  margin: 20vh;
+
+  color: #ffffff;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 20vh;
+  
+  cursor: pointer;
+}
+
+#game-container {
+  display: inline-block;
+  position: relative;
+}
+
+#game-canvas {
+  display: none;
+}
+
+#left-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+  width: 50%;
+  height: 100%;
+}
+
+#right-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  
+  width: 50%;
+  height: 100%;
+}
+
+#hud {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #fff;
+}
+
+#best-time {
+  display: inline;
+}
+
+#timer {
+  background: #000;
+  width: 100px;
+  
+  border-radius: 0 0 0 10px;
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+  font-weight: bold;
+  text-align: left;
+  padding: 0 5px;
+}
+
+#time-label {
+  display: inline;
+  vertical-align: top;
+}
+
+#seconds {
+  display: inline-block;
+  font-size: 1.5em;
+}
+
+#thirds {
+  display: inline-block;
+  font-size: 0.6em;
+}
