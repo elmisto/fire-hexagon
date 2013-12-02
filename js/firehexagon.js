@@ -152,62 +152,26 @@ function drawSegment(fill) {
   context.fillStyle = fill;
   
   context.beginPath();
-  context.moveTo(0, 0);
-  context.lineTo(
-    340,
-    0
-  );
-  context.lineTo(
-    340 * CT1,
-    340 * ST1
-  );
-  context.moveTo(0, 0);
-  context.lineTo(
-    340 * CT2,
-    340 * ST2
-  );
-  context.lineTo(
-    340 * CT3,
-    340 * ST3
-  );
-  context.moveTo(0, 0);
-  context.lineTo(
-    340 * CT4,
-    340 * ST4
-  );
-  context.lineTo(
-    340 * CT5,
-    340 * ST5
-  );
+  context.moveTo( 0, 0 );
+  context.lineTo( 340, 0 );
+  context.lineTo( Math.round(340 * CT1), Math.round(340 * ST1) );
+  context.moveTo( 0, 0 );
+  context.lineTo( Math.round(340 * CT2), Math.round(340 * ST2) );
+  context.lineTo( Math.round(340 * CT3), Math.round(340 * ST3) );
+  context.moveTo( 0, 0 );
+  context.lineTo( Math.round(340 * CT4), Math.round(340 * ST4) );
+  context.lineTo( Math.round(340 * CT5), Math.round(340 * ST5) );
   context.fill();
 }
 
 function drawCenter(fill, stroke) {  
   context.beginPath();
-  context.moveTo(
-    32,
-    0
-  );
-  context.lineTo(
-    32 * CT1,
-    32 * ST1
-  );
-  context.lineTo(
-    32 * CT2,
-    32 * ST2
-  );
-  context.lineTo(
-    32 * CT3,
-    32 * ST3
-  );
-  context.lineTo(
-    32 * CT4,
-    32 * ST4
-  );
-  context.lineTo(
-    32 * CT5,
-    32 * ST5
-  );
+  context.moveTo( 32, 0 );
+  context.lineTo( Math.round(32 * CT1), Math.round(32 * ST1) );
+  context.lineTo( Math.round(32 * CT2), Math.round(32 * ST2) );
+  context.lineTo( Math.round(32 * CT3), Math.round(32 * ST3) );
+  context.lineTo( Math.round(32 * CT4), Math.round(32 * ST4) );
+  context.lineTo( Math.round(32 * CT5), Math.round(32 * ST5) );
   context.closePath();
 
   context.fillStyle = fill;
@@ -236,22 +200,10 @@ function drawObstacle(seg, dist, fill) {
   context.fillStyle = fill;
 
   context.beginPath();
-  context.moveTo(
-    dist * C1,
-    dist * S1
-  );
-  context.lineTo(
-    (dist + 13) * C1,
-    (dist + 13) * S1
-  );
-  context.lineTo(
-    (dist + 13) * C2,
-    (dist + 13) * S2
-  );
-  context.lineTo(
-    dist * C2,
-    dist * S2
-  );
+  context.moveTo( dist * C1, dist * S1 );
+  context.lineTo( (dist + 13) * C1, (dist + 13) * S1 );
+  context.lineTo( (dist + 13) * C2, (dist + 13) * S2 );
+  context.lineTo( dist * C2, dist * S2 );
   context.fill();  
 }
 
@@ -329,7 +281,6 @@ function goResults() {
   menuScreen.style.display = "block";
   
   worldSpeed = TAU / 16;
-  
   window.cancelAnimFrame(requestID);
   requestID = window.requestAnimFrame(menu);
 }
@@ -436,8 +387,8 @@ function animate() {
     
   if(heroRot > 0) { heroSegment = Math.floor((heroRot % TAU) / (TAU / 6)); }
   else { heroSegment = 6 + Math.floor((heroRot % TAU) / (TAU / 6)); }
-    
-  if(!isCollision()) {
+  
+  if( !isCollision() ) {
     requestID = window.requestAnimFrame(animate);
   }
   else {
