@@ -242,6 +242,7 @@ function goMenu() {
 
 function goGame() {
   shapes.length = 0;
+  gameTime = 0; 
   worldSpeed = TAU / 4;
   startTime = performance.now();
   
