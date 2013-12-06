@@ -12,40 +12,147 @@ var menuScreen = document.getElementById("menu-screen");
 var gameScreen = document.getElementById("game-screen");
 
 var startButton = document.getElementById("start-button");
-var leftButton = document.getElementById("left-button");
+var leftButton  = document.getElementById("left-button");
 var rightButton = document.getElementById("right-button");
-var results = document.getElementById("results");
+var results     = document.getElementById("results");
 
-var seconds = document.getElementById("seconds");
-var thirds = document.getElementById("thirds");
+var bestTime = document.getElementById("best-time");
+var gameTime = document.getElementById("game-time");
 
 // -------------------------------------------------------- GAME STATE VARIABLES
-
-var bpm = 130;                         // Game global BPM
-var period = 60 / bpm * 1000;          // Length of one game period in ms
 var beat = 0;                          // Beat counter
 
 var scale = 1;
 
-var worldRot = 0;                      // World rotation
-var worldSpeed = TAU / 4;              // World speed
-var worldDir = 1;                      // World rotation direction
+// --------------------------------------------------------------- TIMER OBJECT
+var timer = new Object();
+timer.timestamp = 0;
+timer.lastTimestamp = 0;
+timer.dt = 0;
+timer.dp = 0;
+timer.time = 0;
 
-var heroRot = PI * Math.random();      // Hero rotation
-var heroSegment = 5;                   // Hero current segment in world
-var heroSpeed = PI;                    // Hero speed
-var heroDir = 0;                       // Hero rotation direction
+timer.tick = function() {
+  this.timestamp = performance.now();
+  this.dt = this.timestamp - this.lastTimestamp;
+  this.time += this.dt;
+  this.dp = this.dt / (60 / 130 * 1000);
+  this.lastTimestamp = this.timestamp;
+};
 
-var timestamp = 0;                     // Loop start time
-var last_timestamp = 0;                // Last loop start time
-var requestID = 0;                     // Animation frame request id
+timer.reset = function() {
+  this.lastTimestamp = performance.now();
+  this.time = 0;
+};
 
-var colors;                            // Used colors
-var h = 120;                           // Base color hue
+timer.convert = function(t) {
+  return {
+    "seconds": Math.floor(t / 1000), 
+    "thirds":  Math.floor((t % 1000) * 60 / 1000)
+  };
+};
 
-var shapes = [];                       // Shapes list
+// ---------------------------------------------------------------- HERO OBJECT
+var hero = new Object();
+hero.rot = 0;
+hero.dir = 0;
+hero.speed = PI;
+hero.update = function() {
+  this.rot += this.dir * this.speed * timer.dp;
+};
 
-var gameTime = 0;                      // Current game start time
+hero.getSegment = function() {
+  if( this.rot > 0 ) { return Math.floor((this.rot % TAU) / (TAU / 6)); }
+  else { return 6 + Math.floor((this.rot % TAU) / (TAU / 6)); }
+};
+
+// --------------------------------------------------------------- WORLD OBJECT
+var world = new Object();
+world.rot = 0;
+world.dir = 1;
+world.speed = TAU / 8;
+world.update = function() {
+  this.rot += this.dir * this.speed * timer.dp;
+};
+
+// -------------------------------------------------------------- COLORS OBJECT
+var colors = new Object();
+colors.hue  = 120;
+colors.bg1  = "hsl(120, 100%, 20%)";
+colors.bg2  = "hsl(120, 100%, 30%)";
+colors.main = "hsl(120, 100%, 60%)";
+colors.update = function() {
+  this.bg1  = "hsl(" + this.hue + ", 100%, 20%)";
+  this.bg2  = "hsl(" + this.hue + ", 100%, 30%)";
+  this.main = "hsl(" + this.hue + ", 100%, 60%)";
+  this.hue += 5 * timer.dp;  //TODO: resolve fixed speed
+};
+
+// -------------------------------------------------------------- SHAPES OBJECT
+var shapes = [];
+shapes.update = function() {
+  if( this.length < 3 ) { this.fill(); }
+  if( this[0].dist < 30 ) { this.shift(); }
+  this.forEach( function(shape) {
+    shape.dist += -60 * timer.dp;
+  });
+};
+
+shapes.fill = function() {
+  var selector = Math.random();
+  if( selector < 0.3 ) {
+    this.push(createCIShape(
+      Math.round(Math.random() * 6),
+      (this.length + 2) * 150)
+    );
+  }
+  else if ( selector < 0.6 ){
+    this.push(createOShape(
+      Math.round(Math.random() * 6),
+      (this.length + 2) * 150)
+    );
+  }
+  else {
+    this.push(createCShape(
+      Math.round(Math.random() * 6),
+      (this.length + 2) * 150)
+    );
+  }
+}
+
+shapes.clear = function() {
+  this.length = 0;
+}
+
+shapes.isCollision = function() {
+  return ( this[0].dist <= 46      &&
+           this[0].dist + 13 >= 46 &&
+           this[0].seg.indexOf( hero.getSegment() ) !== -1 );
+};
+
+// ---------------------------------------------------------- HIGHSCORES OBJECT
+var highscores;
+if( localStorage["fh-highscores"] === undefined ) { highscores = [ 0 ]; }
+else { highscores = JSON.parse( localStorage["fh-highscores"] ) }
+highscores.add = function(t) {
+  if( this.length > 10 ) {
+    this.sort( function(a, b) { return b-a; } );
+    if (this[this.length - 1] < t) {
+      this[this.length - 1] = t;
+    }
+  }
+  else {
+    this.push(t);
+  }
+}
+
+highscores.save = function() {
+  localStorage["fh-highscores"] = JSON.stringify( highscores );
+};
+
+highscores.getBest = function() {
+  return highscores.sort( function(a, b) { return b-a; } )[0];
+};
 
 // ------------------------------------------------- ANIMATION CONTROL FUNCTIONS
 window.requestAnimFrame = (function() {
@@ -65,10 +172,10 @@ window.addEventListener("keydown", onKeyDown, false);
 function onKeyDown(e) {
   switch(e.keyCode) {
     case 37:
-      heroDir = -1;
+      hero.dir = -1;
       break;
     case 39:
-      heroDir = 1;
+      hero.dir = 1;
       break;
     default:
       console.log("Key code: " + e.keyCode + " | Whitch: " + e.which);
@@ -80,25 +187,25 @@ function onKeyUp(e) {
   switch(e.keyCode) {
     case 37:
     case 39:
-      heroDir = 0;
+      hero.dir = 0;
       break;
   }
 }
 
 leftButton.addEventListener("touchstart", function(e) {
-  heroDir = -1;
+  hero.dir = -1;
 }, false);
 
 leftButton.addEventListener("touchend", function(e) {
-  heroDir = 0;
+  hero.dir = 0;
 }, false);
 
 rightButton.addEventListener("touchstart", function(e) {
-  heroDir = 1;
+  hero.dir = 1;
 }, false);
 
 rightButton.addEventListener("touchend", function(e) {
-  heroDir = 0;
+  hero.dir = 0;
 }, false);
 
 // --------------------------------------------------------------- MENU CONTROLS
@@ -156,6 +263,7 @@ function drawCenter(fill, stroke) {
   context.closePath();
   context.fillStyle = fill;
   context.fill();
+  context.lineWidth = 2;
   context.strokeStyle = stroke;
   context.stroke();
 }
@@ -220,32 +328,24 @@ function createOShape(seg, dist) {
   };
 }
 
-function isCollision() {
-  if(shapes.length) { //TODO: obstacle is linear but hero's position is rounded
-     return ( shapes[0].dist <= 46 ) &&
-            ( shapes[0].dist + 13 >= 46 ) &&
-            ( shapes[0].seg.indexOf(heroSegment) !== -1); 
-  }
-  else {
-    return false;
-  }
-} 
-
+// ----------------------------------------------------------------- GAME LOGIC
 function goMenu() {
   loadScreen.style.display = "none";
   menuScreen.style.display = "block";
   canvas.style.display = "block";
   
-  worldSpeed = TAU / 16;
+  world.speed = TAU / 16;
   menu();
 }
 
 function goGame() {
-  shapes.length = 0;
-  gameTime = 0; 
-  worldSpeed = TAU / 4;
-  startTime = performance.now();
-  
+  timer.reset();
+  world.speed = TAU / 4;
+  shapes.clear();
+
+  var b = timer.convert( highscores.getBest() );
+  bestTime.textContent = "BEST " + b.seconds + ":" + b.thirds;
+
   menuScreen.style.display = "none";
   gameScreen.style.display = "block";
   
@@ -257,17 +357,14 @@ function goResults() {
   gameScreen.style.display = "none";
   menuScreen.style.display = "block";
   
-  worldSpeed = TAU / 16;
+  results.innerHTML = Math.round(timer.time) / 1000;
+
+  highscores.add(timer.time);
+  highscores.save();
+
+  world.speed = TAU / 16;
   window.cancelAnimFrame(requestID);
   requestID = window.requestAnimFrame(menu);
-}
-
-function generateColor(h, s, l) {
-  colors = {
-    "bg1":  "hsl( " + h + ", " + s + "%, " + l + "%)",
-    "bg2":  "hsl( " + h + ", " + s + "%, " + (l + 10) + "%)",
-    "main": "hsl( " + h + ", " + s + "%, " + (l + 40) + "%)"
-  };
 }
 
 function clear(fill) {
@@ -277,47 +374,37 @@ function clear(fill) {
 }
 
 function menu() {
-  var timestamp = performance.now();
-  var dp = (timestamp - last_timestamp) / period;
-  last_timestamp = timestamp;
-  
-  h += 5 * dp;
-  generateColor(h, 100, 20);
+  timer.tick();
   
   clear(colors.bg1);
   
-  context.translate(canvas.width / 2, canvas.height / 2);
-  context.scale(scale, scale);
-  context.rotate(worldRot);
+  context.translate(canvas.width * 2 / 3, canvas.height * 2 / 3);
+  context.scale(scale * 2, scale * 2);
+  context.rotate(world.rot);
   drawSegment(colors.bg2);
   shapes.forEach(function(e) {
     drawShape(e, colors.main);
   });
   drawCenter(colors.bg2, colors.main);
   
-  context.rotate(heroRot);
+  context.rotate(hero.rot);
   drawHero(colors.main);
   
-  worldRot += worldDir * worldSpeed * dp;
+  world.update();
+  colors.update();
   requestID = window.requestAnimFrame(menu);
 }
 
 function animate() {
-  var timestamp = performance.now();
-  var dt = timestamp - last_timestamp;
-  var dp = dt / period;
-  last_timestamp = timestamp;
+  timer.tick();
   
-  seconds.innerHTML = Math.floor(gameTime / 1000);
-  thirds.innerHTML = Math.round((gameTime % 1000) * 60 / 1000);
+  var t = timer.convert(timer.time);
+  gameTime.textContent = "TIME " + t.seconds + ":" + t.thirds;
 
-  h += 5 * dp;
-  generateColor(h, 100, 20);
-  
   clear(colors.bg1);
   
   context.translate(canvas.width / 2, canvas.height / 2);
-  context.rotate(worldRot);
+  context.rotate(world.rot);
 
   context.scale(scale, scale);
   drawSegment(colors.bg2);
@@ -331,61 +418,29 @@ function animate() {
   });
   drawCenter(colors.bg2, colors.main);
   
-  context.rotate(heroRot);
+  context.rotate(hero.rot);
   drawHero(colors.main);
 
-  gameTime += dt;
-  beat += dp;
-  worldRot += worldDir * worldSpeed * dp;
-  heroRot += heroDir * heroSpeed * dp;
-  
+  beat += timer.dp;
+  world.update();
+  hero.update();
+  shapes.update();
+  colors.update();
+
   if(beat > 4) {
     beat = 0;
-    worldDir = Math.random() < 0.5 ? 1 : -1;
+    world.dir = Math.random() < 0.5 ? 1 : -1;
   }
   
-  if(shapes.length && shapes[0].dist < 30) {shapes.shift();}
-  
-  shapes.forEach(function(e) {
-    e.dist -= 60 * dp;
-  });
-  
-  if( shapes.length < 3 ) {
-    var selector = Math.random();
-    if( selector < 0.3 ) {
-      shapes.push(createCIShape(
-        Math.round(Math.random() * 6),
-        (shapes.length + 2) * 150)
-      );
-    }
-    else if ( selector < 0.6 ){
-      shapes.push(createOShape(
-        Math.round(Math.random() * 6),
-        (shapes.length + 2) * 150)
-      );
-    }
-    else {
-      shapes.push(createCShape(
-        Math.round(Math.random() * 6),
-        (shapes.length + 2) * 150)
-      );
-    }
-  }
-    
-  if(heroRot > 0) { heroSegment = Math.floor((heroRot % TAU) / (TAU / 6)); }
-  else { heroSegment = 6 + Math.floor((heroRot % TAU) / (TAU / 6)); }
-  
-  if( !isCollision() ) {
+  if( !shapes.isCollision() ) {
     requestID = window.requestAnimFrame(animate);
   }
   else {
     window.navigator.vibrate(100);
-    results.innerHTML = Math.round(gameTime) / 1000;
     goResults(); 
   }
 }
 
 onResize();
 goMenu();
-
 };

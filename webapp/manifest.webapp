@@ -1,9 +1,9 @@
 {
   "name": "Fire Hexagon",
   "description": "Simple particle effect WebGL demo",
-  "launch_path": "/fire-hexagon/webapp/source.html",
+  "launch_path": "/source.html",
   "developer": {
-    "name": "Aszalós Gábor v2"
+    "name": "Aszalós Gábor"
   },
   "fullscreen": "true",
   "orientation": ["landscape"]
