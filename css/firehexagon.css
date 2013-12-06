@@ -44,6 +44,7 @@ html, body {
 #game-container {
   display: inline-block;
   position: relative;
+  overflow: hidden;
 }
 
 #game-canvas {
@@ -71,23 +72,38 @@ html, body {
 #hud {
   position: absolute;
   top: 0;
-  right: 0;
+  width: 100%;
   color: #fff;
 }
 
 #best-time {
-  display: inline;
+  position: absolute;
+  left: -10px;
+  background: #000;
+  width: 100px;
+
+  transform: skew(-20deg);
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+  font-weight: bold;
+  text-align: right;
+  padding: 0 20px;
 }
 
-#timer {
+#best-time div {
+  display: inline-block;
+}
+
+#game-time {
+  position: absolute;
+  right: -10px;
   background: #000;
   width: 100px;
   
-  border-radius: 0 0 0 10px;
+  transform: skew(20deg);
   font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
   font-weight: bold;
   text-align: left;
-  padding: 0 5px;
+  padding: 0 20px;
 }
 
 #time-label {
@@ -95,12 +111,12 @@ html, body {
   vertical-align: top;
 }
 
-#seconds {
+#game-seconds {
   display: inline-block;
   font-size: 1.5em;
 }
 
-#thirds {
+#game-thirds {
   display: inline-block;
   font-size: 0.6em;
 }

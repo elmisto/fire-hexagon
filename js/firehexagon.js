@@ -12,17 +12,14 @@ var menuScreen = document.getElementById("menu-screen");
 var gameScreen = document.getElementById("game-screen");
 
 var startButton = document.getElementById("start-button");
-var leftButton = document.getElementById("left-button");
+var leftButton  = document.getElementById("left-button");
 var rightButton = document.getElementById("right-button");
-var results = document.getElementById("results");
+var results     = document.getElementById("results");
 
-var seconds = document.getElementById("seconds");
-var thirds = document.getElementById("thirds");
+var bestTime = document.getElementById("best-time");
+var gameTime = document.getElementById("game-time");
 
 // -------------------------------------------------------- GAME STATE VARIABLES
-
-var bpm = 130;                         // Game global BPM
-var period = 60 / bpm * 1000;          // Length of one game period in ms
 var beat = 0;                          // Beat counter
 
 var scale = 1;
